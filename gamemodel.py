@@ -113,31 +113,33 @@ class Player:
 """ This is the model of the game"""
 class Game:
     """ Create a game with a given size of cannon (length of sides) and projectiles (radius) """
-    def __init__(self, cannonSize, ballSize):
-        self.player1 = Player()
+    def __init__(self, cannonSize: int, ballSize: int):
+        self.players = [Player(1, -90, False, "blue", cannonSize), Player(2, 90, True, "red", cannonSize)]
+        self.cannonSize = cannonSize
+        self.ballSize = ballSize
+        self.currentPlayer = 1
         # TODO: "pass" means the constructor does nothing. Clearly it should be doing something.
         # HINT: This constructor needs to create two players according to the rules specified in the assignment text
-        pass 
 
     """ A list containing both players """
     def getPlayers(self):
-        return [] #TODO: this is just a dummy value
+        return self.players
 
     """ The height/width of the cannon """
     def getCannonSize(self):
-        return 0 #TODO: this is just a dummy value
+        return self.cannonSize
 
     """ The radius of cannon balls """
     def getBallSize(self):
-        return 0 #TODO: this is just a dummy value
+        return self.ballSize
 
     """ The current player, i.e. the player whose turn it is """
     def getCurrentPlayer(self):
-        return None #TODO: this is just a dummy value
+        return self.currentPlayer
 
     """ The opponent of the current player """
     def getOtherPlayer(self):
-        return None #TODO: this is just a dummy value
+        return 2 if self.currentPlayer == 1 else 1
 
     """ The number (0 or 1) of the current player. This should be the position of the current player in getPlayers(). """
     def getCurrentPlayerNumber(self):
