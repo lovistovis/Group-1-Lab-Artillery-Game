@@ -37,11 +37,6 @@ class GameGraphics:
         p = Point(player.getX(), player.getY()-TEXT_Y_OFFSET)
         text = Text(p, f"Score: {player.getScore()}")
         text.draw(self.win)
-        # draw the score
-        # TODO: draw the text "Score: X", where X is the number of points
-        # for player number playerNr. The text should be placed under
-        # the corresponding cannon. After the drawing,
-        # return the text object.
         return text
 
     def fire(self, angle: float, vel):
