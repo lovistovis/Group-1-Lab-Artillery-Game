@@ -41,13 +41,17 @@ class GameGraphics:
 
     def fire(self, angle: float, vel):
         player = self.game.getCurrentPlayer()
-        proj = Projectile(angle, vel, 5, 10, 10, 10, 10) # TODO: Replace with following: player.fire(angle, vel)
+        proj = Projectile(angle, vel, 5, 10, 10, 1, 100) # TODO: Replace with following: player.fire(angle, vel)
 
         circle_X = proj.getX()
         circle_Y = proj.getY()
 
         # TODO: If the circle for the projectile for the current player
         # is not None, undraw it!
+
+        
+        circle = Circle((Point(circle_X,circle_Y)), 5)
+        circle.draw(self.win)
 
         # draw the projectile (ball/circle)
         # TODO: Create and draw a new circle with the coordinates of
