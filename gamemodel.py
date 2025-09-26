@@ -30,11 +30,11 @@ class Game:
     """ The opponent of the current player """
     def getOtherPlayer(self):
         return None #TODO: this is just a dummy value
-    
+
     """ The number (0 or 1) of the current player. This should be the position of the current player in getPlayers(). """
     def getCurrentPlayerNumber(self):
         return 0 #TODO: this is just a dummy value
-    
+
     """ Switch active player """
     def nextPlayer(self):
         pass #TODO: this should do something instead of nothing
@@ -43,7 +43,6 @@ class Game:
     def setCurrentWind(self, wind):
         pass #TODO: this should do something instead of nothing
 
-    
     def getCurrentWind(self):
         return 0 #TODO: this is just a dummy value
 
@@ -58,7 +57,7 @@ class Game:
 class Player:
    #TODO: You need to create a constructor here. 
    #HINT: It should probably take the Game that creates it as parameter and some additional properties that differ between players (like firing-direction, position and color)
-    
+
     """ Create and return a projectile starting at the centre of this players cannon. Replaces any previous projectile for this player. """
     def fire(self, angle, velocity):
         # The projectile should start in the middle of the cannon of the firing player
@@ -95,8 +94,6 @@ class Player:
     def getAim(self):
         return 0, 0 #TODO: this is just a dummy value 
 
-
-
 """ Models a projectile (a cannonball, but could be used more generally) """
 class Projectile:
     """
@@ -117,7 +114,6 @@ class Projectile:
         self.yvel = velocity*sin(theta)
         self.wind = wind
 
-
     """ 
         Advance time by a given number of seconds
         (typically, time is less than a second, 
@@ -127,22 +123,22 @@ class Projectile:
         # Compute new velocity based on acceleration from gravity/wind
         yvel1 = self.yvel - 9.8*time
         xvel1 = self.xvel + self.wind*time
-        
+
         # Move based on the average velocity in the time period 
         self.xPos = self.xPos + time * (self.xvel + xvel1) / 2.0
         self.yPos = self.yPos + time * (self.yvel + yvel1) / 2.0
-        
+
         # make sure yPos >= 0
         self.yPos = max(self.yPos, 0)
-        
+
         # Make sure xLower <= xPos <= mUpper   
         self.xPos = max(self.xPos, self.xLower)
         self.xPos = min(self.xPos, self.xUpper)
-        
+
         # Update velocities
         self.yvel = yvel1
         self.xvel = xvel1
-        
+
     """ A projectile is moving as long as it has not hit the ground or moved outside the xLower and xUpper limits """
     def isMoving(self):
         return 0 < self.getY() and self.xLower < self.getX() < self.xUpper

@@ -9,7 +9,7 @@ class GameGraphics:
         # open the window
         self.win = GraphWin("Cannon game" , 640, 480, autoflush=False)
         self.win.setCoords(-110, -10, 110, 155)
-        
+
         # draw the terrain
         # TODO: Draw a line from (-110,0) to (110,0)
 
@@ -78,7 +78,7 @@ class GameGraphics:
                 inp.close()
             elif inp.interact() == "Quit":
                 exit()
-            
+
             player = self.game.getCurrentPlayer()
             other = self.game.getOtherPlayer()
             proj = self.fire(angle, vel)
@@ -99,15 +99,15 @@ class InputDialog:
         Text(Point(1,1), "Angle").draw(win)
         self.angle = Entry(Point(3,1), 5).draw(win)
         self.angle.setText(str(angle))
-        
+
         Text(Point(1,2), "Velocity").draw(win)
         self.vel = Entry(Point(3,2), 5).draw(win)
         self.vel.setText(str(vel))
-        
+
         Text(Point(1,3), "Wind").draw(win)
         self.height = Text(Point(3,3), 5).draw(win)
         self.height.setText("{0:.2f}".format(wind))
-        
+
         self.fire = Button(win, Point(1,4), 1.25, .5, "Fire!")
         self.fire.activate()
         self.quit = Button(win, Point(3,4), 1.25, .5, "Quit")
@@ -131,7 +131,6 @@ class InputDialog:
 
 
 class Button:
-
     def __init__(self, win, center, width, height, label):
 
         w,h = width/2.0, height/2.0
