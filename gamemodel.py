@@ -13,23 +13,27 @@ class Game:
 
     """ A list containing both players """
     def getPlayers(self):
-        return [] #TODO: this is just a dummy value
+        return [Player(), Player()] #TODO: this is just a dummy value
+
+    """ The player with num playerNr """
+    def getPlayer(self, playerNr: int): 
+        return self.getPlayers()[playerNr]
 
     """ The height/width of the cannon """
     def getCannonSize(self):
-        return 0 #TODO: this is just a dummy value
+        return 5 #TODO: this is just a dummy value
 
     """ The radius of cannon balls """
     def getBallSize(self):
-        return 0 #TODO: this is just a dummy value
+        return 5 #TODO: this is just a dummy value
 
     """ The current player, i.e. the player whose turn it is """
     def getCurrentPlayer(self):
-        return None #TODO: this is just a dummy value
+        return Player() #TODO: this is just a dummy value
 
     """ The opponent of the current player """
     def getOtherPlayer(self):
-        return None #TODO: this is just a dummy value
+        return Player() #TODO: this is just a dummy value
 
     """ The number (0 or 1) of the current player. This should be the position of the current player in getPlayers(). """
     def getCurrentPlayerNumber(self):
@@ -55,7 +59,7 @@ class Game:
 
 """ Models a player """
 class Player:
-   #TODO: You need to create a constructor here. 
+   #TODO: You need to create a constructor here.
    #HINT: It should probably take the Game that creates it as parameter and some additional properties that differ between players (like firing-direction, position and color)
 
     """ Create and return a projectile starting at the centre of this players cannon. Replaces any previous projectile for this player. """
@@ -88,6 +92,10 @@ class Player:
 
     """ The x-position of the centre of this players cannon """
     def getX(self):
+        return 0 #TODO: this is just a dummy value
+
+    """ The x-position of the centre of this players cannon """
+    def getY(self):
         return 0 #TODO: this is just a dummy value
 
     """ The angle and velocity of the last projectile this player fired, initially (45, 40) """

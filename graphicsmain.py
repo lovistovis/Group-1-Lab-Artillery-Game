@@ -1,9 +1,13 @@
 from gamemodel import *
 from graphics import *
+import graphics
+
+PLAYER_HALF_SIZE = 5
+TEXT_Y_OFFSET = PLAYER_HALF_SIZE*2
 
 
 class GameGraphics:
-    def __init__(self, game):
+    def __init__(self, game: Game):
         self.game = game
 
         # open the window
@@ -17,24 +21,32 @@ class GameGraphics:
         self.draw_scores  = [self.drawScore(0), self.drawScore(1)]
         self.draw_projs   = [None, None]
 
-    def drawCanon(self,playerNr):
+    def drawCanon(self, playerNr: int):
         # draw the cannon
-        # TODO: draw a square with the size of the cannon with the color
-        # and the position of the player with number playerNr.
-        # After the drawing, return the rectangle object.
-        return None
+        player = self.game.getPlayer(playerNr)
 
-    def drawScore(self,playerNr):
+        p1 = Point(player.getX()-PLAYER_HALF_SIZE, player.getY()-PLAYER_HALF_SIZE)
+        p2 = Point(player.getX()+PLAYER_HALF_SIZE, player.getY()+PLAYER_HALF_SIZE)
+
+        rect = Rectangle(p1, p2)
+        rect.draw(self.win)
+        return rect
+
+    def drawScore(self, playerNr: int):
+        player = self.game.getPlayer(playerNr)
+        p = Point(player.getX(), player.getY()-TEXT_Y_OFFSET)
+        text = Text(p, f"Score: {player.getScore()}")
+        text.draw(self.win)
         # draw the score
         # TODO: draw the text "Score: X", where X is the number of points
         # for player number playerNr. The text should be placed under
         # the corresponding cannon. After the drawing,
         # return the text object.
-        return None
+        return text
 
-    def fire(self, angle, vel):
+    def fire(self, angle: float, vel):
         player = self.game.getCurrentPlayer()
-        proj = player.fire(angle, vel)
+        proj = Projectile(angle, vel, 5, 10, 10, 10, 10) # TODO: Replace with following: player.fire(angle, vel)
 
         circle_X = proj.getX()
         circle_Y = proj.getY()
@@ -59,7 +71,7 @@ class GameGraphics:
 
         return proj
 
-    def updateScore(self,playerNr):
+    def updateScore(self, playerNr: int):
         # update the score on the screen
         # TODO: undraw the old text, create and draw a new text
         pass
@@ -93,7 +105,7 @@ class GameGraphics:
 
 
 class InputDialog:
-    def __init__ (self, angle, vel, wind):
+    def __init__(self, angle: float, vel, wind):
         self.win = win = GraphWin("Fire", 200, 300)
         win.setCoords(0,4.5,4,.5)
         Text(Point(1,1), "Angle").draw(win)
@@ -132,7 +144,6 @@ class InputDialog:
 
 class Button:
     def __init__(self, win, center, width, height, label):
-
         w,h = width/2.0, height/2.0
         x,y = center.getX(), center.getY()
         self.xmax, self.xmin = x+w, x-w
