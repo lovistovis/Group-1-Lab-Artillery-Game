@@ -2,11 +2,13 @@ from gamemodel import *
 from graphics import *
 
 PLAYER_HALF_SIZE = 5
+PLAYER_SIZE = PLAYER_HALF_SIZE * 2
 TEXT_Y_OFFSET = PLAYER_HALF_SIZE * 2
+PROJECTILE_SIZE = 3
 
 
 class GameGraphics:
-    def __init__(self, game: Game) -> "GameGraphics":
+    def __init__(self, game: Game):
         self.game = game
 
         self.win = GraphWin("Cannon game", 640, 480, autoflush=False)
@@ -16,7 +18,7 @@ class GameGraphics:
 
         self.draw_cannons = [self.drawCanon(0), self.drawCanon(1)]
         self.draw_scores = [self.drawScore(0), self.drawScore(1)]
-        self.draw_projs = [None, None]
+        self.draw_projs: list[Circle | None] = [None, None]
 
     def drawCanon(self, playerNr: int) -> Rectangle:
         player = self.game.getPlayer(playerNr)
@@ -52,11 +54,12 @@ class GameGraphics:
         circle_x = proj.getX()
         circle_y = proj.getY()
 
-        if self.draw_projs[playerNr] != None:
-            self.draw_projs[playerNr].undraw()
+        old_proj = self.draw_projs[playerNr]
+        if old_proj is not None:
+            old_proj.undraw()
             self.draw_projs[playerNr] = None
 
-        circle = Circle((Point(circle_x, circle_y)), 5)
+        circle = Circle((Point(circle_x, circle_y)), PROJECTILE_SIZE)
         circle.draw(self.win)
         self.draw_projs[playerNr] = circle
 
@@ -79,14 +82,16 @@ class GameGraphics:
             wind = self.game.getCurrentWind()
             self.updateScore(0)
 
-            # InputDialog(self, angle, vel, wind) is a class in gamegraphics
             inp = InputDialog(oldAngle, oldVel, wind)
-            # interact(self) is a function inside InputDialog. It runs a loop until the user presses either the quit or fire button
+
+            angle, vel = None, None
             if inp.interact() == "Fire!":
                 angle, vel = inp.getValues()
                 inp.close()
             elif inp.interact() == "Quit":
                 exit()
+            else:
+                raise RuntimeError("Invalid return from InputDialog")
 
             player = self.game.getCurrentPlayer()
             other = self.game.getOtherPlayer()
@@ -102,7 +107,7 @@ class GameGraphics:
 
 
 class InputDialog:
-    def __init__(self, angle: float, vel: float, wind: float) -> "InputDialog":
+    def __init__(self, angle: float, vel: float, wind: float):
         self.win = win = GraphWin("Fire", 200, 300)
         win.setCoords(0, 4.5, 4, 0.5)
 
@@ -144,7 +149,7 @@ class InputDialog:
 class Button:
     def __init__(
         self, win: GraphWin, center: Point, width: float, height: float, label: str
-    ) -> "Button":
+    ):
         w, h = width / 2.0, height / 2.0
         x, y = center.getX(), center.getY()
 
@@ -176,16 +181,16 @@ class Button:
     def activate(self) -> None:
         self.label.setFill("black")
         self.rect.setWidth(2)
-        self.active = 1
+        self.active = True
 
     def deactivate(self) -> None:
         self.label.setFill("darkgrey")
         self.rect.setWidth(1)
-        self.active = 0
+        self.active = False
 
 
 def main() -> None:
-    GameGraphics(Game(11, 3)).play()
+    GameGraphics(Game(PLAYER_SIZE, PROJECTILE_SIZE)).play()
 
 
 if __name__ == "__main__":
