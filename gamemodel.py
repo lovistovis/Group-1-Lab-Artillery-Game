@@ -87,7 +87,7 @@ class Player:
         self.isReversed = isReversed
         self.size = size
         self.pos = (xPos, self.size / 2.0)
-        self.colour = colour
+        self.color = colour
 
         self.score = 0
         self.aim = STARTING_AIM
@@ -148,7 +148,7 @@ class Player:
 
     def getColor(self) -> str:
         """Returns the color of this player (a string)."""
-        return self.colour
+        return self.color
 
     def getX(self) -> float:
         """The x-position of the centre of this players cannon."""
