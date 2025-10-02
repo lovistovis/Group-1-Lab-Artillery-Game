@@ -1,6 +1,5 @@
 from enum import Enum
 from math import pi, tan
-from os import POSIX_FADV_DONTNEED
 
 from gamemodel import *
 from graphics import *
@@ -198,7 +197,7 @@ class GameGraphics:
                 rect.move(p.xvel / TICKS_PER_SECOND, p.yvel / TICKS_PER_SECOND)
 
     def updateWindParticles(self) -> None:
-        for i, t in enumerate(self.wind_particles):
+        for t in self.wind_particles:
             p, rect = t
             x_old, y_old = p.x_pos, p.y_pos
             p.update(1.0 / TICKS_PER_SECOND, WIND_PARTICLE_DRAG_X, WIND_PARTICLE_DRAG_Y, True)
@@ -213,8 +212,7 @@ class GameGraphics:
             rect.move(p.x_pos - x_old, p.y_pos - y_old)
 
     def updateWindParticleWindSpeed(self, wind: float) -> None:
-        for i, t in enumerate(self.wind_particles):
-            p, _ = t
+        for p, _ in self.wind_particles:
             p.wind = wind
 
     def formatScore(self, score: int) -> str:
@@ -320,8 +318,8 @@ class InteractAction(Enum):
 
 
 class InputDialog:
-    def __init__(self, game: Game, angle: float, vel: float, wind: float):
-        self.game = game
+    def __init__(self, game_graphics: GameGraphics, angle: float, vel: float, wind: float):
+        self.game_graphics = game_graphics
         self.win = win = GraphWin("Fire", 200, 300)
         win.setCoords(0, 4.5, 4, 0.5)
 
@@ -345,7 +343,7 @@ class InputDialog:
 
     def interact(self) -> InteractAction:
         while True:
-            self.game.updateFrame()
+            self.game_graphics.updateFrame()
 
             if self.win.isClosed():
                 exit()
