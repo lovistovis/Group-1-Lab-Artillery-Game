@@ -15,7 +15,6 @@ class GameGraphics:
         self.win.setCoords(-110, -10, 110, 155)
 
         # draw the terrain
-        # TODO: Draw a line from (-110,0) to (110,0)
         
         Line(Point(-110,0),Point(110,0)).draw(self.win)
 
