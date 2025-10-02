@@ -1,83 +1,110 @@
+from enum import Enum
+
 from gamemodel import *
 from graphics import *
 
+TEXT_Y_OFFSET_FACTOR = 0.7
+TICKS_PER_SECOND = 50
+WIN_Y_LOWER = -10
+WIN_Y_UPPER = 155
+WIN_WIDTH = 640
+WIN_HIGHT = 480
+WIN_NAME = "Cannon game"
+
 
 class GameGraphics:
-    def __init__(self, game):
+    def __init__(self, game: Game):
         self.game = game
 
-        # open the window
-        self.win = GraphWin("Cannon game" , 640, 480, autoflush=False)
-        self.win.setCoords(-110, -10, 110, 155)
+        self.win = GraphWin(WIN_NAME, WIN_WIDTH, WIN_HIGHT, autoflush=False)
+        self.win.setCoords(X_LOWER, WIN_Y_LOWER, X_UPPER, WIN_Y_UPPER)
 
-        # draw the terrain
-        # TODO: Draw a line from (-110,0) to (110,0)
+        self.player_size = game.getCannonSize()
+        self.player_half_size = self.player_size / 2.0
+        self.projectile_radius = game.getProjectileRadius()
 
         self.draw_cannons = [self.drawCanon(0), self.drawCanon(1)]
-        self.draw_scores  = [self.drawScore(0), self.drawScore(1)]
-        self.draw_projs   = [None, None]
+        self.draw_scores = [self.drawScore(0), self.drawScore(1)]
+        self.draw_projs: list[Circle | None] = [None, None]
 
-    def drawCanon(self,playerNr):
-        # draw the cannon
-        # TODO: draw a square with the size of the cannon with the color
-        # and the position of the player with number playerNr.
-        # After the drawing, return the rectangle object.
-        return None
+        Line(Point(X_LOWER, 0), Point(X_UPPER, 0)).draw(self.win)
 
-    def drawScore(self,playerNr):
-        # draw the score
-        # TODO: draw the text "Score: X", where X is the number of points
-        # for player number playerNr. The text should be placed under
-        # the corresponding cannon. After the drawing,
-        # return the text object.
-        return None
+    def drawCanon(self, player_nr: int) -> Rectangle:
+        player = self.game.getPlayer(player_nr)
 
-    def fire(self, angle, vel):
-        player = self.game.getCurrentPlayer()
+        p1 = Point(
+            player.getX() - self.player_half_size, player.getY() - self.player_half_size
+        )
+        p2 = Point(
+            player.getX() + self.player_half_size, player.getY() + self.player_half_size
+        )
+
+        rect = Rectangle(p1, p2)
+        rect.draw(self.win)
+        return rect
+
+    def formatScore(self, score: int) -> str:
+        return f"Score: {score}"
+
+    def drawScore(self, player_nr: int) -> Text:
+        player = self.game.getPlayer(player_nr)
+        p = Point(
+            player.getX(), player.getY() - self.player_size * TEXT_Y_OFFSET_FACTOR
+        )
+        text = Text(p, self.formatScore(player.getScore()))
+        text.draw(self.win)
+        return text
+
+    def updateScore(self, player_nr: int) -> None:
+        player = self.game.getPlayer(player_nr)
+        self.draw_scores[player_nr].setText(self.formatScore(player.getScore()))
+
+    def fire(self, angle: float, vel: float) -> Projectile:
+        player_nr = self.game.getCurrentPlayerNumber()
+        player = self.game.getPlayer(player_nr)
         proj = player.fire(angle, vel)
 
-        circle_X = proj.getX()
-        circle_Y = proj.getY()
+        circle_x = proj.getX()
+        circle_y = proj.getY()
 
-        # TODO: If the circle for the projectile for the current player
-        # is not None, undraw it!
+        old_proj = self.draw_projs[player_nr]
+        if old_proj is not None:
+            old_proj.undraw()
+            self.draw_projs[player_nr] = None
 
-        # draw the projectile (ball/circle)
-        # TODO: Create and draw a new circle with the coordinates of
-        # the projectile.
+        circle = Circle((Point(circle_x, circle_y)), self.projectile_radius)
+        circle.draw(self.win)
+        self.draw_projs[player_nr] = circle
 
         while proj.isMoving():
-            proj.update(1/50)
+            proj.update(1.0 / TICKS_PER_SECOND)
 
-            # move is a function in graphics. It moves an object dx units in x direction and dy units in y direction
-            circle.move(proj.getX() - circle_X, proj.getY() - circle_Y)
+            circle.move(proj.getX() - circle_x, proj.getY() - circle_y)
 
-            circle_X = proj.getX()
-            circle_Y = proj.getY()
+            circle_x = proj.getX()
+            circle_y = proj.getY()
 
-            update(50)
+            update(TICKS_PER_SECOND)
 
         return proj
 
-    def updateScore(self,playerNr):
-        # update the score on the screen
-        # TODO: undraw the old text, create and draw a new text
-        pass
-
-    def play(self):
+    def play(self) -> None:
         while True:
             player = self.game.getCurrentPlayer()
-            oldAngle,oldVel = player.getAim()
+            old_angle, old_vel = player.getAim()
             wind = self.game.getCurrentWind()
+            self.updateScore(0)
 
-            # InputDialog(self, angle, vel, wind) is a class in gamegraphics
-            inp = InputDialog(oldAngle,oldVel,wind)
-            # interact(self) is a function inside InputDialog. It runs a loop until the user presses either the quit or fire button
-            if inp.interact() == "Fire!": 
+            inp = InputDialog(old_angle, old_vel, wind)
+
+            angle, vel = None, None
+            if inp.interact() == InteractAction.QUIT:
+                exit()
+            elif inp.interact() == InteractAction.FIRE:
                 angle, vel = inp.getValues()
                 inp.close()
-            elif inp.interact() == "Quit":
-                exit()
+            else:
+                raise RuntimeError("Invalid return from InputDialog")
 
             player = self.game.getCurrentPlayer()
             other = self.game.getOtherPlayer()
@@ -92,77 +119,97 @@ class GameGraphics:
             self.game.nextPlayer()
 
 
+class InteractAction(Enum):
+    QUIT = 0
+    FIRE = 1
+
+
 class InputDialog:
-    def __init__ (self, angle, vel, wind):
+    def __init__(self, angle: float, vel: float, wind: float):
         self.win = win = GraphWin("Fire", 200, 300)
-        win.setCoords(0,4.5,4,.5)
-        Text(Point(1,1), "Angle").draw(win)
-        self.angle = Entry(Point(3,1), 5).draw(win)
+        win.setCoords(0, 4.5, 4, 0.5)
+
+        Text(Point(1, 1), "Angle").draw(win)
+        self.angle = Entry(Point(3, 1), 5).draw(win)
         self.angle.setText(str(angle))
 
-        Text(Point(1,2), "Velocity").draw(win)
-        self.vel = Entry(Point(3,2), 5).draw(win)
+        Text(Point(1, 2), "Velocity").draw(win)
+        self.vel = Entry(Point(3, 2), 5).draw(win)
         self.vel.setText(str(vel))
 
-        Text(Point(1,3), "Wind").draw(win)
-        self.height = Text(Point(3,3), 5).draw(win)
+        Text(Point(1, 3), "Wind").draw(win)
+        self.height = Text(Point(3, 3), 5).draw(win)
         self.height.setText("{0:.2f}".format(wind))
 
-        self.fire = Button(win, Point(1,4), 1.25, .5, "Fire!")
+        self.fire = Button(win, Point(1, 4), 1.25, 0.5, "Fire!")
         self.fire.activate()
-        self.quit = Button(win, Point(3,4), 1.25, .5, "Quit")
+
+        self.quit = Button(win, Point(3, 4), 1.25, 0.5, "Quit")
         self.quit.activate()
 
-    def interact(self):
+    def interact(self) -> InteractAction:
         while True:
             pt = self.win.getMouse()
             if self.quit.clicked(pt):
-                return "Quit"
-            if self.fire.clicked(pt):
-                return "Fire!"
+                return InteractAction.QUIT
+            elif self.fire.clicked(pt):
+                return InteractAction.FIRE
 
-    def getValues(self):
+    def getValues(self) -> tuple[float, float]:
         a = float(self.angle.getText())
         v = float(self.vel.getText())
-        return a,v
+        return a, v
 
-    def close(self):
+    def close(self) -> None:
         self.win.close()
 
 
 class Button:
-    def __init__(self, win, center, width, height, label):
+    def __init__(
+        self, win: GraphWin, center: Point, width: float, height: float, label: str
+    ):
+        w, h = width / 2.0, height / 2.0
+        x, y = center.getX(), center.getY()
 
-        w,h = width/2.0, height/2.0
-        x,y = center.getX(), center.getY()
-        self.xmax, self.xmin = x+w, x-w
-        self.ymax, self.ymin = y+h, y-h
+        self.xmax, self.xmin = x + w, x - w
+        self.ymax, self.ymin = y + h, y - h
+
         p1 = Point(self.xmin, self.ymin)
         p2 = Point(self.xmax, self.ymax)
-        self.rect = Rectangle(p1,p2)
-        self.rect.setFill('lightgray')
+
+        self.rect = Rectangle(p1, p2)
+        self.rect.setFill("lightgray")
         self.rect.draw(win)
+
         self.label = Text(center, label)
         self.label.draw(win)
+
         self.deactivate()
 
-    def clicked(self, p):
-        return self.active and \
-               self.xmin <= p.getX() <= self.xmax and \
-               self.ymin <= p.getY() <= self.ymax
+    def clicked(self, p: Point) -> bool:
+        return (
+            self.active
+            and self.xmin <= p.getX() <= self.xmax
+            and self.ymin <= p.getY() <= self.ymax
+        )
 
-    def getLabel(self):
+    def getLabel(self) -> Text:
         return self.label.getText()
 
-    def activate(self):
-        self.label.setFill('black')
+    def activate(self) -> None:
+        self.label.setFill("black")
         self.rect.setWidth(2)
-        self.active = 1
+        self.active = True
 
-    def deactivate(self):
-        self.label.setFill('darkgrey')
+    def deactivate(self) -> None:
+        self.label.setFill("darkgrey")
         self.rect.setWidth(1)
-        self.active = 0
+        self.active = False
 
 
-GameGraphics(Game(11,3)).play()
+def main() -> None:
+    GameGraphics(Game(10, 3)).play()
+
+
+if __name__ == "__main__":
+    main()
