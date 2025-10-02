@@ -22,7 +22,6 @@ class GameGraphics:
         self.draw_projs   = [None, None]
 
     def drawCanon(self, playerNr: int):
-        # draw the cannon
         player = self.game.getPlayer(playerNr)
 
         p1 = Point(player.getX()-PLAYER_HALF_SIZE, player.getY()-PLAYER_HALF_SIZE)
@@ -32,10 +31,13 @@ class GameGraphics:
         rect.draw(self.win)
         return rect
 
+    def formatScore(self, score: int) -> str:
+        return f"Score: {score}"
+
     def drawScore(self, playerNr: int):
         player = self.game.getPlayer(playerNr)
         p = Point(player.getX(), player.getY()-TEXT_Y_OFFSET)
-        text = Text(p, f"Score: {player.getScore()}")
+        text = Text(p, self.formatScore(player.getScore()))
         text.draw(self.win)
         return text
 
@@ -49,8 +51,7 @@ class GameGraphics:
         # TODO: If the circle for the projectile for the current player
         # is not None, undraw it!
 
-        
-        circle = Circle((Point(circle_X,circle_Y)), 5)
+        circle = Circle((Point(circle_X, circle_Y)), 5)
         circle.draw(self.win)
 
         # draw the projectile (ball/circle)
@@ -71,15 +72,15 @@ class GameGraphics:
         return proj
 
     def updateScore(self, playerNr: int):
-        # update the score on the screen
-        # TODO: undraw the old text, create and draw a new text
-        pass
+        player = self.game.getPlayer(playerNr)
+        self.draw_scores[playerNr].setText(self.formatScore(player.getScore()))
 
     def play(self):
         while True:
             player = self.game.getCurrentPlayer()
             oldAngle,oldVel = player.getAim()
             wind = self.game.getCurrentWind()
+            self.updateScore(0)
 
             # InputDialog(self, angle, vel, wind) is a class in gamegraphics
             inp = InputDialog(oldAngle,oldVel,wind)
