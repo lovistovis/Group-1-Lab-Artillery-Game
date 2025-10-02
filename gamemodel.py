@@ -118,6 +118,7 @@ class Game:
         self.cannonSize = cannonSize
         self.ballSize = ballSize
         self.currentPlayer = 1
+        self.wind = 0.0
         # TODO: "pass" means the constructor does nothing. Clearly it should be doing something.
         # HINT: This constructor needs to create two players according to the rules specified in the assignment text
 
@@ -135,31 +136,29 @@ class Game:
 
     """ The current player, i.e. the player whose turn it is """
     def getCurrentPlayer(self):
-        return self.currentPlayer
+        return self.players[self.currentPlayer-1]
 
     """ The opponent of the current player """
     def getOtherPlayer(self):
-        return 2 if self.currentPlayer == 1 else 1
+        return self.players[1] if self.currentPlayer == 1 else self.players[0]
 
     """ The number (0 or 1) of the current player. This should be the position of the current player in getPlayers(). """
     def getCurrentPlayerNumber(self):
-        return 0 #TODO: this is just a dummy value
+        return self.currentPlayer-1
 
     """ Switch active player """
     def nextPlayer(self):
-        pass #TODO: this should do something instead of nothing
+        self.currentPlayer = 1 if self.currentPlayer == 2 else self.currentPlayer = 2
 
     """ Set the current wind speed, only used for testing """
     def setCurrentWind(self, wind):
-        pass #TODO: this should do something instead of nothing
+        self.wind = wind
+        print("Wind is now ", wind)
 
     def getCurrentWind(self):
-        return 0 #TODO: this is just a dummy value
+        return self.wind
 
     """ Start a new round with a random wind value (-10 to +10) """
     def newRound(self):
-        #HINT: random.random() gives a random value between 0 and 1
-        # multiplying this by 20 gives a random value between 0 and 20
-        # how do you shift a value between 0 and 20 to one between -10 and +10?
-        pass #TODO: this should do something instead of nothing
+        self.wind = (random.random()*20)-10
 
