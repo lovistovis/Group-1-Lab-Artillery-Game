@@ -61,36 +61,73 @@ class Projectile:
 class Player:
    #TODO: You need to create a constructor here. 
    #HINT: It should probably take the Game that creates it as parameter and some additional properties that differ between players (like firing-direction, position and color)
-    def __init__(self, id, pos, facing, colour, size):
-        self.id = id
-        self.pos = pos
-        self.facing = facing
+    def __init__(self, game, isReversed, xPos, colour):
+        self.game = game
+        self.isReversed = isReversed
+        self.pos = (xPos, 0)
+        self.facing = ("left" if isReversed else "right")
         self.colour = colour
         self.score = 0
-        self.barrel = ()
-        self.size = size
-
+        self.barrel = None
+        self.size = 1
 
     """ Create and return a projectile starting at the centre of this players cannon. Replaces any previous projectile for this player. """
     def fire(self, angle, velocity):
         # The projectile should start in the middle of the cannon of the firing player
-        # HINT: Your job here is to call the constructor of Projectile with all the right values
-        # Some are hard-coded, like the boundaries for x-position, others can be found in Game or Player
-        return None #TODO: this is just a dummy value
+        cannon_x = self.pos[0] + (self.size / 2.0)
+        cannon_y = self.pos[1]
 
+        if self.isReversed:
+            angle = 180 - angle
+
+        # HINT: Your job here is to call the constructor of Projectile with all the right value 
+        # Some are hard-coded, like the boundaries for x-position, others can be found in Game or Player
+        
+        wind = self.game.wind
+        xLower = self.game.xLower
+        xUpper = self.game.xUpper
+
+        Projectile = Projectile(
+            angle=angle,
+            velocity=velocity,
+            wind=wind,
+            xPos=cannon_x,
+            yPos=cannon_y,
+            xLower=xLower,
+            xUpper=xUpper)
+        
+        self.barrel = Projectile
+        return Projectile
+    
     """ Gives the x-distance from this players cannon to a projectile. If the cannon and the projectile touch (assuming the projectile is on the ground and factoring in both cannon and projectile size) this method should return 0"""
     def projectileDistance(self, proj: Projectile):
-        if proj.getX() > self.getX()
+        cannonSize = self.game.getCannonSize()
+        ballSize = self.game.getBallSize()
+
+        cannon_left = self.pos[0]
+        cannon_right = self.pos[0] + cannonSize
+
+        Projectile_center = proj.getX()
+        Projectile_left = Projectile_center - (ballSize / 2.0)
+        Projectile_right = Projectile_center + (ballSize / 2.0)
+
+        if Projectile_right < cannon_left:
+            return Projectile_right - cannon_left
+        elif Projectile_left > cannon_right:
+            return Projectile_left - cannon_right
+        else:
+            return 0   
+    
         # HINT: both self (a Player) and proj (a Projectile) have getX()-methods.
         # HINT: This method should give a negative value if the projectile missed to the left and positive if it missed to the right.
         # The distance should be how far the projectile and cannon are from touching, not the distance between their centers.
         # You probably need to use getCannonSize and getBallSize from Game to compensate for the size of cannons/cannonballs
  
-        return 0 #TODO: this is a dummy value.
-
+        
     """ Increase the score of this player by 1."""
     def increaseScore(self, n = 1):
         self.score += n
+        
 
     """ The current score of this player """
     def getScore(self):
