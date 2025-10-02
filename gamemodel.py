@@ -45,6 +45,7 @@ class Projectile:
         (typically, time is less than a second,
         for large values the projectile may move erratically).
         """
+
         # Compute new velocity based on acceleration from gravity/wind
         yvel1 = self.yvel - 9.8 * time
         xvel1 = self.xvel + self.wind * time
