@@ -1,3 +1,4 @@
+from enum import Enum
 from gamemodel import *
 from graphics import *
 
@@ -86,11 +87,11 @@ class GameGraphics:
             inp = InputDialog(oldAngle, oldVel, wind)
 
             angle, vel = None, None
-            if inp.interact() == "Fire!":
+            if inp.interact() == InteractAction.QUIT:
+                exit()
+            elif inp.interact() == InteractAction.FIRE:
                 angle, vel = inp.getValues()
                 inp.close()
-            elif inp.interact() == "Quit":
-                exit()
             else:
                 raise RuntimeError("Invalid return from InputDialog")
 
@@ -105,6 +106,11 @@ class GameGraphics:
                 self.game.newRound()
 
             self.game.nextPlayer()
+
+
+class InteractAction(Enum):
+    QUIT = 0
+    FIRE = 1
 
 
 class InputDialog:
@@ -130,13 +136,13 @@ class InputDialog:
         self.quit = Button(win, Point(3, 4), 1.25, 0.5, "Quit")
         self.quit.activate()
 
-    def interact(self) -> str:
+    def interact(self) -> InteractAction:
         while True:
             pt = self.win.getMouse()
             if self.quit.clicked(pt):
-                return "Quit"
-            if self.fire.clicked(pt):
-                return "Fire!"
+                return InteractAction.QUIT
+            elif self.fire.clicked(pt):
+                return InteractAction.FIRE
 
     def getValues(self) -> tuple[float, float]:
         a = float(self.angle.getText())
