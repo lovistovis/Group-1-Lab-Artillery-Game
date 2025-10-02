@@ -136,7 +136,7 @@ class Player:
         if abs(raw_distance) < total_overlap_size:
             return 0
 
-        return raw_distance - (total_overlap_size if raw_distance > 0 else -total_overlap_size)
+        return raw_distance - total_overlap_size * (1 if raw_distance > 0 else -1)
 
     def increaseScore(self, n: int = 1) -> None:
         """Increase the score of this player by 1."""
