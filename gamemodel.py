@@ -124,7 +124,7 @@ class Player:
         this method should return 0
         """
 
-        proj_half_size = self.game.getBallSize()
+        proj_half_size = self.game.getProjectileRadius()
         cannon_half_size = self.size / 2.0
 
         total_overlap_size = cannon_half_size + proj_half_size
@@ -167,11 +167,11 @@ class Player:
 class Game:
     """This is the model of the game."""
 
-    def __init__(self, cannonSize: int, ballSize: int):
+    def __init__(self, cannonSize: int, projectileRadius: int):
         """Create a game with a given size of cannon (length of sides) and projectiles (radius)."""
 
         self.cannonSize = cannonSize
-        self.ballSize = ballSize
+        self.projectileRadius = projectileRadius
 
         self.players = [
             Player(self, False, cannonSize, PLAYER_0_STARTING_X, "blue"),
@@ -192,9 +192,9 @@ class Game:
         """The height/width of the cannon."""
         return self.cannonSize
 
-    def getBallSize(self) -> int:
+    def getProjectileRadius(self) -> int:
         """The radius of cannon balls."""
-        return self.ballSize
+        return self.projectileRadius
 
     def getCurrentPlayer(self) -> Player:
         """The current player, i.e. the player whose turn it is."""
