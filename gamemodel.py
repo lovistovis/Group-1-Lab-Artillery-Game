@@ -6,6 +6,7 @@ X_UPPER = 110
 PLAYER_0_STARTING_X = -90
 PLAYER_1_STARTING_X = 90
 STARTING_AIM = (45, 40)
+WIND_SELECTION_RANGE = 10
 
 
 class Projectile:
@@ -221,5 +222,5 @@ class Game:
         return self.wind
 
     def newRound(self) -> None:
-        """Start a new round with a random wind value (-10 to +10)."""
-        self.wind = (random() * 20) - 10
+        """Start a new round with a random wind value (-WIND_SELECTION_RANGE to +WIND_SELECTION_RANGE)."""
+        self.wind = (random() * WIND_SELECTION_RANGE * 2) - WIND_SELECTION_RANGE
