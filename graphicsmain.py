@@ -91,11 +91,11 @@ class GameGraphics:
     def play(self) -> None:
         while True:
             player = self.game.getCurrentPlayer()
-            oldAngle, oldVel = player.getAim()
+            old_angle, old_vel = player.getAim()
             wind = self.game.getCurrentWind()
             self.updateScore(0)
 
-            inp = InputDialog(oldAngle, oldVel, wind)
+            inp = InputDialog(old_angle, old_vel, wind)
 
             angle, vel = None, None
             if inp.interact() == InteractAction.QUIT:
