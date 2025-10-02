@@ -5,14 +5,19 @@ from graphics import *
 
 TEXT_Y_OFFSET_FACTOR = 0.7
 TICKS_PER_SECOND = 50
+WIN_Y_LOWER = -10
+WIN_Y_UPPER = 155
+WIN_WIDTH = 640
+WIN_HIGHT = 480
+WIN_NAME = "Cannon game"
 
 
 class GameGraphics:
     def __init__(self, game: Game):
         self.game = game
 
-        self.win = GraphWin("Cannon game", 640, 480, autoflush=False)
-        self.win.setCoords(-110, -10, 110, 155)
+        self.win = GraphWin(WIN_NAME, WIN_WIDTH, WIN_HIGHT, autoflush=False)
+        self.win.setCoords(X_LOWER, WIN_Y_LOWER, X_UPPER, WIN_Y_UPPER)
 
         self.player_size = game.getCannonSize()
         self.player_half_size = self.player_size / 2.0
@@ -22,7 +27,7 @@ class GameGraphics:
         self.draw_scores = [self.drawScore(0), self.drawScore(1)]
         self.draw_projs: list[Circle | None] = [None, None]
 
-        Line(Point(-110, 0), Point(110, 0)).draw(self.win)
+        Line(Point(X_LOWER, 0), Point(X_UPPER, 0)).draw(self.win)
 
     def drawCanon(self, player_nr: int) -> Rectangle:
         player = self.game.getPlayer(player_nr)
