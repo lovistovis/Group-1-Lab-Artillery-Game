@@ -16,6 +16,8 @@ class GameGraphics:
 
         # draw the terrain
         # TODO: Draw a line from (-110,0) to (110,0)
+        
+        Line(Point(-110,0),Point(110,0)).draw(self.win)
 
         self.draw_cannons = [self.drawCanon(0), self.drawCanon(1)]
         self.draw_scores  = [self.drawScore(0), self.drawScore(1)]
