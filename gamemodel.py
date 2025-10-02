@@ -223,5 +223,5 @@ class Game:
         return self.wind
 
     def newRound(self) -> None:
-        """Start a new round with a random wind value (-WIND_SELECTION_RANGE to +WIND_SELECTION_RANGE)."""
+        """Start a new round with a random wind value (within +/-WIND_SELECTION_RANGE)."""
         self.wind = (random() * WIND_SELECTION_RANGE * 2) - WIND_SELECTION_RANGE
