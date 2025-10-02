@@ -81,13 +81,13 @@ class Player:
     """Models a player."""
 
     def __init__(
-        self, game: "Game", isReversed: bool, size: int, xPos: float, colour: str
+        self, game: "Game", isReversed: bool, size: int, xPos: float, color: str
     ):
         self.game = game
         self.isReversed = isReversed
         self.size = size
         self.pos = (xPos, self.size / 2.0)
-        self.color = colour
+        self.color = color
 
         self.score = 0
         self.aim = STARTING_AIM
