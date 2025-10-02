@@ -89,7 +89,6 @@ class Player:
         self.pos = (xPos, self.size / 2.0)
         self.colour = colour
 
-        self.facing = "left" if isReversed else "right"
         self.score = 0
         self.aim = STARTING_AIM
 
