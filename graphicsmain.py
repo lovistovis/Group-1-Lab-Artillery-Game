@@ -21,8 +21,8 @@ class GameGraphics:
 
         Line(Point(-110, 0), Point(110, 0)).draw(self.win)
 
-    def drawCanon(self, playerNr: int) -> Rectangle:
-        player = self.game.getPlayer(playerNr)
+    def drawCanon(self, player_nr: int) -> Rectangle:
+        player = self.game.getPlayer(player_nr)
 
         p1 = Point(player.getX() - self.player_half_size, player.getY() - self.player_half_size)
         p2 = Point(player.getX() + self.player_half_size, player.getY() + self.player_half_size)
@@ -34,20 +34,20 @@ class GameGraphics:
     def formatScore(self, score: int) -> str:
         return f"Score: {score}"
 
-    def drawScore(self, playerNr: int) -> Text:
-        player = self.game.getPlayer(playerNr)
+    def drawScore(self, player_nr: int) -> Text:
+        player = self.game.getPlayer(player_nr)
         p = Point(player.getX(), player.getY() - self.player_size * TEXT_Y_OFFSET_FACTOR)
         text = Text(p, self.formatScore(player.getScore()))
         text.draw(self.win)
         return text
 
-    def updateScore(self, playerNr: int) -> None:
-        player = self.game.getPlayer(playerNr)
-        self.draw_scores[playerNr].setText(self.formatScore(player.getScore()))
+    def updateScore(self, player_nr: int) -> None:
+        player = self.game.getPlayer(player_nr)
+        self.draw_scores[player_nr].setText(self.formatScore(player.getScore()))
 
     def fire(self, angle: float, vel: float) -> Projectile:
-        playerNr = self.game.getCurrentPlayerNumber()
-        player = self.game.getPlayer(playerNr)
+        player_nr = self.game.getCurrentPlayerNumber()
+        player = self.game.getPlayer(player_nr)
         proj = Projectile(
             angle, vel, 5, 10, 10, 1, 100
         )  # TODO: Replace with following: player.fire(angle, vel)
@@ -55,14 +55,14 @@ class GameGraphics:
         circle_x = proj.getX()
         circle_y = proj.getY()
 
-        old_proj = self.draw_projs[playerNr]
+        old_proj = self.draw_projs[player_nr]
         if old_proj is not None:
             old_proj.undraw()
-            self.draw_projs[playerNr] = None
+            self.draw_projs[player_nr] = None
 
         circle = Circle((Point(circle_x, circle_y)), self.projectile_size)
         circle.draw(self.win)
-        self.draw_projs[playerNr] = circle
+        self.draw_projs[player_nr] = circle
 
         while proj.isMoving():
             proj.update(1 / 50)

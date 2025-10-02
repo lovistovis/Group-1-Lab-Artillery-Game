@@ -39,7 +39,7 @@ class Projectile:
         self.yvel = velocity * sin(theta)
         self.wind = wind
 
-    def update(self, time: float):
+    def update(self, time: float) -> None:
         """
         Advance time by a given number of seconds
         (typically, time is less than a second,
@@ -183,9 +183,9 @@ class Game:
         """A list containing both players."""
         return self.players
 
-    def getPlayer(self, playerNr: int) -> Player:
-        """The player with nr playerNr."""
-        return self.players[playerNr]
+    def getPlayer(self, player_nr: int) -> Player:
+        """The player with nr player_nr."""
+        return self.players[player_nr]
 
     def getCannonSize(self) -> int:
         """The height/width of the cannon."""
