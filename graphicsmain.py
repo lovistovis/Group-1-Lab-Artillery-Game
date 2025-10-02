@@ -77,7 +77,7 @@ class GameGraphics:
         self.draw_projs[player_nr] = circle
 
         while proj.isMoving():
-            proj.update(1 / TICKS_PER_SECOND)
+            proj.update(1.0 / TICKS_PER_SECOND)
 
             circle.move(proj.getX() - circle_x, proj.getY() - circle_y)
 
