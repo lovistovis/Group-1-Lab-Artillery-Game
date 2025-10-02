@@ -13,7 +13,7 @@ class GameGraphics:
 
         self.player_size = game.getCannonSize()
         self.player_half_size = self.player_size / 2.0
-        self.projectile_size = game.getBallSize()
+        self.projectile_size = game.getProjectileRadius()
 
         self.draw_cannons = [self.drawCanon(0), self.drawCanon(1)]
         self.draw_scores = [self.drawScore(0), self.drawScore(1)]

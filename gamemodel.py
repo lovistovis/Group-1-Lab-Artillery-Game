@@ -177,7 +177,7 @@ class Game:
             Player(self, False, cannonSize, PLAYER_0_STARTING_X, "blue"),
             Player(self, True, cannonSize, PLAYER_1_STARTING_X, "red"),
         ]
-        self.currentPlayer = 1
+        self.currentPlayer = 0
         self.wind = 0.0
 
     def getPlayers(self) -> list[Player]:
@@ -198,19 +198,19 @@ class Game:
 
     def getCurrentPlayer(self) -> Player:
         """The current player, i.e. the player whose turn it is."""
-        return self.players[self.currentPlayer - 1]
+        return self.players[self.currentPlayer]
 
     def getOtherPlayer(self) -> Player:
         """The opponent of the current player."""
-        return self.players[1] if self.currentPlayer == 1 else self.players[0]
+        return self.players[1] if self.currentPlayer == 0 else self.players[0]
 
     def getCurrentPlayerNumber(self) -> int:
         """The number (0 or 1) of the current player. This should be the position of the current player in getPlayers()."""
-        return self.currentPlayer - 1
+        return self.currentPlayer
 
     def nextPlayer(self) -> None:
         """Switch active player."""
-        self.currentPlayer = 1 if self.currentPlayer == 2 else 2
+        self.currentPlayer = 0 if self.currentPlayer == 1 else 1
 
     def setCurrentWind(self, wind) -> None:
         """Set the current wind speed, only used for testing."""
