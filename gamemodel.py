@@ -31,14 +31,15 @@ class Projectile:
         xLower and xUpper: The lowest and highest x-positions allowed
         """
 
+        self.wind = wind
         self.yPos = yPos
         self.xPos = xPos
         self.xLower = xLower
         self.xUpper = xUpper
+
         theta = radians(angle)
         self.xvel = velocity * cos(theta)
         self.yvel = velocity * sin(theta)
-        self.wind = wind
 
     def update(self, time: float) -> None:
         """
