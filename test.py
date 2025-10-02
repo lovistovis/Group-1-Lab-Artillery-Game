@@ -62,7 +62,7 @@ def runTests(game):
         proj.update(0.1)
         ticks += 1
         test(ticks <= 25, "projectile should have stopped now...")
-    test(ticks == 25, "Incorrect tick-count")
+    test(ticks == 25, f"Incorrect tick-count, should be {25}, was {ticks}")
 
     test(proj.getY() == 0.0, "projectile should stop at y=0")
     test(abs(proj.getX() - 3.9637563106115907) < 0.01, "Projectile X-Position is {0:f}, should be -3.9637563106115907".format(proj.getX()))
@@ -87,7 +87,7 @@ def runTests(game):
         proj.update(0.1)
         ticks += 1
         assert ticks <= 61, "projectile should have stopped now..."
-    test(ticks == 61, "Incorrect tick-count")
+    test(ticks == 61, f"Incorrect tick-count, should be {61}, was {ticks}")
     test(proj.getY()==0.0, "projectile should always stop at y=0")
     test(abs(proj.getX() - -86.84740597475547) < 0.01, "Projectile X-Position is {0:f}, should be -86.84740597475547".format(proj.getX()))
     test(abs(players[1].projectileDistance(proj) - -168.84740597475547) < 0.01, "Projectile X-distance to player is {0:f}, should be 168.84740597475547".format(players[1].projectileDistance(proj)))
@@ -117,8 +117,7 @@ def runTests(game):
         proj.update(0.1)
         ticks += 1
         assert ticks <= 61, "projectile should have stopped now..."
-        
-    test(ticks == 61, "Incorrect tick-count")
+    test(ticks == 61, f"Incorrect tick-count, should be {61}, was {ticks}")
     test(abs(proj.getX() - 68.2424059747553) < 0.01, "Projectile X-Position is {0:f}, should be 68.2424059747553".format(proj.getX()))
     
     # A few additional hints

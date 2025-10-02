@@ -1,11 +1,8 @@
 from gamemodel import *
 from graphics import *
 
-PLAYER_HALF_SIZE = 5
-PLAYER_SIZE = PLAYER_HALF_SIZE * 2
-TEXT_Y_OFFSET = PLAYER_HALF_SIZE * 2
-PROJECTILE_SIZE = 3
 
+TEXT_Y_OFFSET_FACTOR = 0.7
 
 class GameGraphics:
     def __init__(self, game: Game):
@@ -14,17 +11,21 @@ class GameGraphics:
         self.win = GraphWin("Cannon game", 640, 480, autoflush=False)
         self.win.setCoords(-110, -10, 110, 155)
 
-        Line(Point(-110, 0), Point(110, 0)).draw(self.win)
+        self.player_size = game.getCannonSize()
+        self.player_half_size = self.player_size / 2.0
+        self.projectile_size = game.getBallSize()
 
         self.draw_cannons = [self.drawCanon(0), self.drawCanon(1)]
         self.draw_scores = [self.drawScore(0), self.drawScore(1)]
         self.draw_projs: list[Circle | None] = [None, None]
 
+        Line(Point(-110, 0), Point(110, 0)).draw(self.win)
+
     def drawCanon(self, playerNr: int) -> Rectangle:
         player = self.game.getPlayer(playerNr)
 
-        p1 = Point(player.getX() - PLAYER_HALF_SIZE, player.getY() - PLAYER_HALF_SIZE)
-        p2 = Point(player.getX() + PLAYER_HALF_SIZE, player.getY() + PLAYER_HALF_SIZE)
+        p1 = Point(player.getX() - self.player_half_size, player.getY() - self.player_half_size)
+        p2 = Point(player.getX() + self.player_half_size, player.getY() + self.player_half_size)
 
         rect = Rectangle(p1, p2)
         rect.draw(self.win)
@@ -35,7 +36,7 @@ class GameGraphics:
 
     def drawScore(self, playerNr: int) -> Text:
         player = self.game.getPlayer(playerNr)
-        p = Point(player.getX(), player.getY() - TEXT_Y_OFFSET)
+        p = Point(player.getX(), player.getY() - self.player_size * TEXT_Y_OFFSET_FACTOR)
         text = Text(p, self.formatScore(player.getScore()))
         text.draw(self.win)
         return text
@@ -59,7 +60,7 @@ class GameGraphics:
             old_proj.undraw()
             self.draw_projs[playerNr] = None
 
-        circle = Circle((Point(circle_x, circle_y)), PROJECTILE_SIZE)
+        circle = Circle((Point(circle_x, circle_y)), self.projectile_size)
         circle.draw(self.win)
         self.draw_projs[playerNr] = circle
 
@@ -190,7 +191,7 @@ class Button:
 
 
 def main() -> None:
-    GameGraphics(Game(PLAYER_SIZE, PROJECTILE_SIZE)).play()
+    GameGraphics(Game(10, 3)).play()
 
 
 if __name__ == "__main__":
