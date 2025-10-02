@@ -96,15 +96,15 @@ class GameGraphics:
             self.updateScore(0)
 
             inp = InputDialog(old_angle, old_vel, wind)
+            action = inp.interact()
 
             angle, vel = None, None
-            if inp.interact() == InteractAction.QUIT:
-                exit()
-            elif inp.interact() == InteractAction.FIRE:
-                angle, vel = inp.getValues()
-                inp.close()
-            else:
-                raise RuntimeError("Invalid return from InputDialog")
+            match action:
+                case InteractAction.QUIT:
+                    exit()
+                case InteractAction.FIRE:
+                    angle, vel = inp.getValues()
+                    inp.close()
 
             player = self.game.getCurrentPlayer()
             other = self.game.getOtherPlayer()
