@@ -4,6 +4,7 @@ from gamemodel import *
 from graphics import *
 
 TEXT_Y_OFFSET_FACTOR = 0.7
+TICKS_PER_SECOND = 50
 
 
 class GameGraphics:
@@ -15,7 +16,7 @@ class GameGraphics:
 
         self.player_size = game.getCannonSize()
         self.player_half_size = self.player_size / 2.0
-        self.projectile_size = game.getProjectileRadius()
+        self.projectile_radius = game.getProjectileRadius()
 
         self.draw_cannons = [self.drawCanon(0), self.drawCanon(1)]
         self.draw_scores = [self.drawScore(0), self.drawScore(1)]
@@ -56,9 +57,7 @@ class GameGraphics:
     def fire(self, angle: float, vel: float) -> Projectile:
         player_nr = self.game.getCurrentPlayerNumber()
         player = self.game.getPlayer(player_nr)
-        proj = Projectile(
-            angle, vel, 5, 10, 10, 1, 100
-        )  # TODO: Replace with following: player.fire(angle, vel)
+        proj = player.fire(angle, vel)
 
         circle_x = proj.getX()
         circle_y = proj.getY()
@@ -68,19 +67,19 @@ class GameGraphics:
             old_proj.undraw()
             self.draw_projs[player_nr] = None
 
-        circle = Circle((Point(circle_x, circle_y)), self.projectile_size)
+        circle = Circle((Point(circle_x, circle_y)), self.projectile_radius)
         circle.draw(self.win)
         self.draw_projs[player_nr] = circle
 
         while proj.isMoving():
-            proj.update(1 / 50)
+            proj.update(1 / TICKS_PER_SECOND)
 
             circle.move(proj.getX() - circle_x, proj.getY() - circle_y)
 
             circle_x = proj.getX()
             circle_y = proj.getY()
 
-            update(50)
+            update(TICKS_PER_SECOND)
 
         return proj
 
