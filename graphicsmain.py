@@ -42,21 +42,20 @@ class GameGraphics:
         return text
 
     def fire(self, angle: float, vel):
-        player = self.game.getCurrentPlayer()
+        playerNr = self.game.getCurrentPlayerNumber()
+        player = self.game.getPlayer(playerNr)
         proj = Projectile(angle, vel, 5, 10, 10, 1, 100) # TODO: Replace with following: player.fire(angle, vel)
 
         circle_X = proj.getX()
         circle_Y = proj.getY()
 
-        # TODO: If the circle for the projectile for the current player
-        # is not None, undraw it!
+        if self.draw_projs[playerNr] != None:
+            self.draw_projs[playerNr].undraw()
+            self.draw_projs[playerNr] = None
 
         circle = Circle((Point(circle_X, circle_Y)), 5)
         circle.draw(self.win)
-
-        # draw the projectile (ball/circle)
-        # TODO: Create and draw a new circle with the coordinates of
-        # the projectile.
+        self.draw_projs[playerNr] = circle
 
         while proj.isMoving():
             proj.update(1/50)
