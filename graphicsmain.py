@@ -1,9 +1,10 @@
 from enum import Enum
+
 from gamemodel import *
 from graphics import *
 
-
 TEXT_Y_OFFSET_FACTOR = 0.7
+
 
 class GameGraphics:
     def __init__(self, game: Game):
@@ -25,8 +26,12 @@ class GameGraphics:
     def drawCanon(self, player_nr: int) -> Rectangle:
         player = self.game.getPlayer(player_nr)
 
-        p1 = Point(player.getX() - self.player_half_size, player.getY() - self.player_half_size)
-        p2 = Point(player.getX() + self.player_half_size, player.getY() + self.player_half_size)
+        p1 = Point(
+            player.getX() - self.player_half_size, player.getY() - self.player_half_size
+        )
+        p2 = Point(
+            player.getX() + self.player_half_size, player.getY() + self.player_half_size
+        )
 
         rect = Rectangle(p1, p2)
         rect.draw(self.win)
@@ -37,7 +42,9 @@ class GameGraphics:
 
     def drawScore(self, player_nr: int) -> Text:
         player = self.game.getPlayer(player_nr)
-        p = Point(player.getX(), player.getY() - self.player_size * TEXT_Y_OFFSET_FACTOR)
+        p = Point(
+            player.getX(), player.getY() - self.player_size * TEXT_Y_OFFSET_FACTOR
+        )
         text = Text(p, self.formatScore(player.getScore()))
         text.draw(self.win)
         return text
