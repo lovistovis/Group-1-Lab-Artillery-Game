@@ -1,0 +1,23 @@
+Meeting 26/9 - 2025
+
+Project Leader - Shade / Love
+Secretary - Ivy / Ivar
+
+Notes:
+Meeting started - 13:45
+
+Agenda ----
+
+We unanimously agreed to Shade becomming group leader for this project and Ivy will be the Secretary
+We started by dividing up the tasks to which we were supposed to do, ending up with two groups of two people each working on the two parts of the assignment as follows:
+Ivy + Shade => Works on graphics
+Tasti + Vinly => Works on Game function
+
+The project started by setting up a Git repository for the project 
+We decided on using an MIT licence for the project
+
+We agreed to ignore expandability for now and it might be brought up later in case of there being interest for it
+
+Shade started by importing all the files into the repository and then we continued to work on the assignment for the rest of the meeting.
+
+Meeting Ended - 15:06
