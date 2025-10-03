@@ -43,7 +43,13 @@ class Projectile:
         self.xvel = velocity * cos(theta)
         self.yvel = velocity * sin(theta)
 
-    def update(self, time: float, drag_x: float = 1.0, drag_y: float = 1.0, ignore_x_limits: bool = False) -> None:
+    def update(
+        self,
+        time: float,
+        drag_x: float = 1.0,
+        drag_y: float = 1.0,
+        ignore_x_limits: bool = False,
+    ) -> None:
         """
         Advance time by a given number of seconds
         (typically, time is less than a second,
@@ -104,11 +110,8 @@ class Player:
         Replaces any previous projectile for this player.
         """
 
-        if self.is_reversed:
-            angle = 180 - angle
-
         projectile = Projectile(
-            angle=angle,
+            angle=180 - angle if self.is_reversed else angle,
             velocity=velocity,
             wind=self.game.wind,
             x_pos=self.pos[0],
