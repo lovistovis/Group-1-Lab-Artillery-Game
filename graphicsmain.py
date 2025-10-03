@@ -124,7 +124,11 @@ class GameGraphics:
         self, initial_spawn: bool = False
     ) -> tuple[float, float]:
         x = (random() - 0.5) * 1 * WORLD_WIDTH
-        y = random()*WORLD_HEIGHT if initial_spawn else Y_UPPER + WIND_PARTICLE_Y_SPAWN_OFFSET
+        y = (
+            random() * WORLD_HEIGHT
+            if initial_spawn
+            else Y_UPPER + WIND_PARTICLE_Y_SPAWN_OFFSET
+        )
         return x, y
 
     def drawWindParticles(self) -> None:
@@ -134,7 +138,7 @@ class GameGraphics:
             p = Projectile(
                 angle=0.0,
                 velocity=0.0,
-                wind=self.game.wind*WIND_PARTICLE_WIND_FACTOR,
+                wind=self.game.wind * WIND_PARTICLE_WIND_FACTOR,
                 x_pos=x,
                 y_pos=y,
                 x_lower=X_LOWER,
@@ -200,15 +204,17 @@ class GameGraphics:
         for t in self.wind_particles:
             p, rect = t
             x_old, y_old = p.x_pos, p.y_pos
-            p.update(1.0 / TICKS_PER_SECOND, WIND_PARTICLE_DRAG_X, WIND_PARTICLE_DRAG_Y, True)
+            p.update(
+                1.0 / TICKS_PER_SECOND, WIND_PARTICLE_DRAG_X, WIND_PARTICLE_DRAG_Y, True
+            )
             if p.getY() <= 0.0:
                 p.x_pos, p.y_pos = self.generateWindParticlePos()
-            elif p.getX() <= X_LOWER-2:
-                p.x_pos = X_UPPER+1
-                p.y_pos += (random()-0.5)*WIND_PARTICLE_Y_SPREAD_ON_EDGE_HIT
-            elif p.getX() >= X_UPPER+2:
-                p.x_pos = X_LOWER-1
-                p.y_pos += (random()-0.5)*WIND_PARTICLE_Y_SPREAD_ON_EDGE_HIT
+            elif p.getX() <= X_LOWER - 2:
+                p.x_pos = X_UPPER + 1
+                p.y_pos += (random() - 0.5) * WIND_PARTICLE_Y_SPREAD_ON_EDGE_HIT
+            elif p.getX() >= X_UPPER + 2:
+                p.x_pos = X_LOWER - 1
+                p.y_pos += (random() - 0.5) * WIND_PARTICLE_Y_SPREAD_ON_EDGE_HIT
             rect.move(p.x_pos - x_old, p.y_pos - y_old)
 
     def updateWindParticleWindSpeed(self, wind: float) -> None:
@@ -318,7 +324,9 @@ class InteractAction(Enum):
 
 
 class InputDialog:
-    def __init__(self, game_graphics: GameGraphics, angle: float, vel: float, wind: float):
+    def __init__(
+        self, game_graphics: GameGraphics, angle: float, vel: float, wind: float
+    ):
         self.game_graphics = game_graphics
         self.win = win = GraphWin("Fire", 200, 300)
         win.setCoords(0, 4.5, 4, 0.5)
@@ -367,7 +375,13 @@ class InputDialog:
 
 class Button:
     def __init__(
-        self, win: GraphWin, center: Point, width: float, height: float, label: str, color: str
+        self,
+        win: GraphWin,
+        center: Point,
+        width: float,
+        height: float,
+        label: str,
+        color: str,
     ):
         w, h = width / 2.0, height / 2.0
         x, y = center.getX(), center.getY()
