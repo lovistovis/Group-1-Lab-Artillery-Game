@@ -160,6 +160,9 @@ class GameGraphics:
             self.wind_particles.append((p, rect))
 
     def spawnParticles(self, pos: tuple[float, float]) -> None:
+        for p, r in self.particles:
+            r.undraw()
+
         self.particles: list[tuple[Projectile, Rectangle]] = []
         for _ in range(HIT_PARTICLE_COUNT):
             p = Projectile(
