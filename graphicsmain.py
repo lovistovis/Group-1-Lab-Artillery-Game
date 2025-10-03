@@ -5,7 +5,7 @@ from gamemodel import *
 from graphics import *
 
 TEXT_Y_OFFSET_FACTOR = 0.7
-TICKS_PER_SECOND = 130
+TICKS_PER_SECOND = 60
 Y_LOWER = -10
 Y_UPPER = 155
 WORLD_WIDTH = X_UPPER - X_LOWER
