@@ -6,6 +6,7 @@ from graphics import *
 
 TEXT_Y_OFFSET_FACTOR = 0.7
 TICKS_PER_SECOND = 60
+TIME_SPEED_FACTOR = 2
 Y_LOWER = -10
 Y_UPPER = 155
 WORLD_WIDTH = X_UPPER - X_LOWER
@@ -72,7 +73,7 @@ class GameGraphics:
         self.updateStripedBackground()
         self.updateParticles()
         self.updateWindParticles()
-        update(TICKS_PER_SECOND*2)
+        update(TICKS_PER_SECOND*TIME_SPEED_FACTOR)
 
     def updateStripedBackground(self) -> None:
         for line in self.striped_background_lines:
@@ -267,22 +268,13 @@ class GameGraphics:
         # Redraw scores to place them in front of ball
         self.redrawScores()
 
-        other_player = self.game.getOtherPlayer()
-        collided = False
         while proj.isMoving():
             proj.update(1.0 / TICKS_PER_SECOND)
 
-            if not collided and other_player.collisionCheck(proj):
-                collided = True
-                circle.undraw()
-                closest_point = other_player.closestPoint(proj.getX(), proj.getY())
-                self.spawnParticles(closest_point)
+            circle.move(proj.getX() - circle_x, proj.getY() - circle_y)
 
-            if not collided:
-                circle.move(proj.getX() - circle_x, proj.getY() - circle_y)
-
-                circle_x = proj.getX()
-                circle_y = proj.getY()
+            circle_x = proj.getX()
+            circle_y = proj.getY()
 
             self.updateFrame()
 
@@ -306,12 +298,16 @@ class GameGraphics:
                     angle, vel = inp.getValues()
                     inp.close()
 
-            player = self.game.getCurrentPlayer()
+            player_nr = self.game.getCurrentPlayerNumber()
+            player = self.game.getPlayer(player_nr)
             other = self.game.getOtherPlayer()
             proj = self.fire(angle, vel)
             distance = other.projectileDistance(proj)
 
             if distance == 0.0:
+                self.draw_projs[player_nr].undraw()
+                self.spawnParticles((proj.x_pos, proj.y_pos))
+
                 player.increaseScore()
                 self.updateScore(self.game.getCurrentPlayerNumber())
                 self.game.newRound()
