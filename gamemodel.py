@@ -5,6 +5,8 @@ X_LOWER = -110
 X_UPPER = 110
 PLAYER_0_STARTING_X = -90
 PLAYER_1_STARTING_X = 90
+PLAYER_0_COLOR = "blue"
+PLAYER_1_COLOR = "red"
 STARTING_AIM = (45, 40)
 WIND_SELECTION_RANGE = 10
 
@@ -17,10 +19,10 @@ class Projectile:
         angle: float,
         velocity: float,
         wind: float,
-        xPos: float,
-        yPos: float,
-        xLower: float,
-        xUpper: float,
+        x_pos: float,
+        y_pos: float,
+        x_lower: float,
+        x_upper: float,
     ):
         """
         Constructor parameters:
@@ -32,16 +34,22 @@ class Projectile:
         """
 
         self.wind = wind
-        self.yPos = yPos
-        self.xPos = xPos
-        self.xLower = xLower
-        self.xUpper = xUpper
+        self.y_pos = y_pos
+        self.x_pos = x_pos
+        self.x_lower = x_lower
+        self.x_upper = x_upper
 
         theta = radians(angle)
         self.xvel = velocity * cos(theta)
         self.yvel = velocity * sin(theta)
 
-    def update(self, time: float) -> None:
+    def update(
+        self,
+        time: float,
+        drag_x: float = 1.0,
+        drag_y: float = 1.0,
+        ignore_x_limits: bool = False,
+    ) -> None:
         """
         Advance time by a given number of seconds
         (typically, time is less than a second,
@@ -53,43 +61,44 @@ class Projectile:
         xvel1 = self.xvel + self.wind * time
 
         # Move based on the average velocity in the time period
-        self.xPos = self.xPos + time * (self.xvel + xvel1) / 2.0
-        self.yPos = self.yPos + time * (self.yvel + yvel1) / 2.0
+        self.x_pos = self.x_pos + time * (self.xvel + xvel1) / 2.0
+        self.y_pos = self.y_pos + time * (self.yvel + yvel1) / 2.0
 
         # make sure yPos >= 0
-        self.yPos = max(self.yPos, 0)
+        self.y_pos = max(self.y_pos, 0)
 
-        # Make sure xLower <= xPos <= mUpper
-        self.xPos = max(self.xPos, self.xLower)
-        self.xPos = min(self.xPos, self.xUpper)
+        if not ignore_x_limits:
+            # Make sure xLower <= xPos <= mUpper
+            self.x_pos = max(self.x_pos, self.x_lower)
+            self.x_pos = min(self.x_pos, self.x_upper)
 
         # Update velocities
-        self.yvel = yvel1
-        self.xvel = xvel1
+        self.xvel = xvel1 * drag_x
+        self.yvel = yvel1 * drag_y
 
     def isMoving(self) -> bool:
         """A projectile is moving as long as it has not hit the ground or moved outside the xLower and xUpper limits"""
-        return 0 < self.getY() and self.xLower < self.getX() < self.xUpper
+        return 0 < self.getY() and self.x_lower < self.getX() < self.x_upper
 
     def getX(self) -> float:
         """The current x-position of the projectile."""
-        return self.xPos
+        return self.x_pos
 
     def getY(self) -> float:
         """The current y-position (height) of the projectile. Should never be below 0."""
-        return self.yPos
+        return self.y_pos
 
 
 class Player:
     """Models a player."""
 
     def __init__(
-        self, game: "Game", isReversed: bool, size: int, xPos: float, color: str
+        self, game: "Game", is_reversed: bool, size: int, x_pos: float, color: str
     ):
         self.game = game
-        self.isReversed = isReversed
+        self.is_reversed = is_reversed
         self.size = size
-        self.pos = (xPos, self.size / 2.0)
+        self.pos = (x_pos, self.size / 2.0)
         self.color = color
 
         self.score = 0
@@ -101,17 +110,14 @@ class Player:
         Replaces any previous projectile for this player.
         """
 
-        if self.isReversed:
-            angle = 180 - angle
-
         projectile = Projectile(
-            angle=angle,
+            angle=180 - angle if self.is_reversed else angle,
             velocity=velocity,
             wind=self.game.wind,
-            xPos=self.pos[0],
-            yPos=self.pos[1],
-            xLower=X_LOWER,
-            xUpper=X_UPPER,
+            x_pos=self.pos[0],
+            y_pos=self.pos[1],
+            x_lower=X_LOWER,
+            x_upper=X_UPPER,
         )
 
         self.aim = (angle, velocity)
@@ -141,6 +147,33 @@ class Player:
 
         return raw_distance - total_overlap_size * (1 if raw_distance > 0 else -1)
 
+    def collisionCheck(self, proj: Projectile) -> float:
+        circle_distance_x = abs(proj.getX() - self.pos[0])
+        circle_distance_y = abs(proj.getY() - self.pos[1])
+
+        projectile_r = self.game.getProjectileRadius()
+        half_size = self.size / 2.0
+        if circle_distance_x > (half_size + projectile_r) or circle_distance_y > (
+            half_size + projectile_r
+        ):
+            return False
+
+        if circle_distance_x <= half_size or circle_distance_y <= half_size:
+            return True
+
+        corner_distance_sq = (circle_distance_x - half_size) ** 2 + (
+            circle_distance_y - half_size
+        ) ** 2
+
+        return corner_distance_sq <= (projectile_r**2)
+
+    def closestPoint(self, x: float, y: float) -> tuple[float, float]:
+        half_size = self.size / 2.0
+        return (
+            max(self.pos[0] - half_size, min(x, self.pos[0] + half_size)),
+            max(self.pos[1] - half_size, min(y, self.pos[1] + half_size)),
+        )
+
     def increaseScore(self, n: int = 1) -> None:
         """Increase the score of this player by 1."""
         self.score += n
@@ -169,17 +202,17 @@ class Player:
 class Game:
     """This is the model of the game."""
 
-    def __init__(self, cannonSize: int, projectileRadius: int):
+    def __init__(self, cannon_size: int, projectile_radius: int):
         """Create a game with a given size of cannon (length of sides) and projectiles (radius)."""
 
-        self.cannonSize = cannonSize
-        self.projectileRadius = projectileRadius
+        self.cannon_size = cannon_size
+        self.projectile_radius = projectile_radius
 
         self.players = [
-            Player(self, False, cannonSize, PLAYER_0_STARTING_X, "blue"),
-            Player(self, True, cannonSize, PLAYER_1_STARTING_X, "red"),
+            Player(self, False, cannon_size, PLAYER_0_STARTING_X, PLAYER_0_COLOR),
+            Player(self, True, cannon_size, PLAYER_1_STARTING_X, PLAYER_1_COLOR),
         ]
-        self.currentPlayer = 0
+        self.current_player = 0
         self.wind = 0.0
 
     def getPlayers(self) -> list[Player]:
@@ -192,27 +225,27 @@ class Game:
 
     def getCannonSize(self) -> int:
         """The height/width of the cannon."""
-        return self.cannonSize
+        return self.cannon_size
 
     def getProjectileRadius(self) -> int:
         """The radius of cannon balls."""
-        return self.projectileRadius
+        return self.projectile_radius
 
     def getCurrentPlayer(self) -> Player:
         """The current player, i.e. the player whose turn it is."""
-        return self.players[self.currentPlayer]
+        return self.players[self.current_player]
 
     def getOtherPlayer(self) -> Player:
         """The opponent of the current player."""
-        return self.players[1] if self.currentPlayer == 0 else self.players[0]
+        return self.players[1] if self.current_player == 0 else self.players[0]
 
     def getCurrentPlayerNumber(self) -> int:
         """The number (0 or 1) of the current player. This should be the position of the current player in getPlayers()."""
-        return self.currentPlayer
+        return self.current_player
 
     def nextPlayer(self) -> None:
         """Switch active player."""
-        self.currentPlayer = 0 if self.currentPlayer == 1 else 1
+        self.current_player = 0 if self.current_player == 1 else 1
 
     def setCurrentWind(self, wind) -> None:
         """Set the current wind speed, only used for testing."""
