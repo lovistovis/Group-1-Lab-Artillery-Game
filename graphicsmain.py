@@ -33,7 +33,7 @@ HIT_PARTICLE_MAX_VELOCITY = 10
 HIT_PARTICLE_MAX_HALF_SIZE = 1
 HIT_PARTICLE_PLAYER_0_COLOR_FACTORS = (10, 10, 255)
 HIT_PARTICLE_PLAYER_1_COLOR_FACTORS = (255, 10, 10)
-WIND_PARTICLE_COUNT = 1000
+WIND_PARTICLE_COUNT = 100
 WIND_PARTICLE_DRAG_X = 0.999
 WIND_PARTICLE_DRAG_Y = 0.99
 WIND_PARTICLE_COLOR_FACTORS = (50, 50, 50)
@@ -72,7 +72,7 @@ class GameGraphics:
         self.updateStripedBackground()
         self.updateParticles()
         self.updateWindParticles()
-        update(TICKS_PER_SECOND)
+        update(TICKS_PER_SECOND*2)
 
     def updateStripedBackground(self) -> None:
         for line in self.striped_background_lines:
