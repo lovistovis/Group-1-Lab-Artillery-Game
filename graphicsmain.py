@@ -278,6 +278,8 @@ class GameGraphics:
 
             self.updateFrame()
 
+        self.draw_projs[player_nr].undraw()
+
         return proj
 
     def play(self) -> None:
